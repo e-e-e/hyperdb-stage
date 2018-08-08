@@ -1,0 +1,23 @@
+{
+  "name": "hyperdb-stage",
+  "version": "0.0.1",
+  "description": "a staging-area for hyperdb",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint && mocha",
+    "tdd": "mocha -w",
+    "lint": "standard"
+  },
+  "author": "Benjamin Forster",
+  "license": "MIT",
+  "dependencies": {
+    "hyperdb": "^3.4.0",
+    "nanoiterator": "^1.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "random-access-memory": "^3.0.0",
+    "standard": "^11.0.1"
+  }
+}
