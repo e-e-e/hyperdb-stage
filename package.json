@@ -11,6 +11,14 @@
     "report-coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Benjamin Forster",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e-e-e/hyperdb-stage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/e-e-e/hyperdb-stage/issues"
+  },
+  "homepage": "https://github.com/e-e-e/hyperdb-stage#readme",
   "license": "MIT",
   "dependencies": {
     "hyperdb": "^3.5.0",
