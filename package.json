@@ -1,6 +1,6 @@
 {
   "name": "hyperdb-stage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a staging-area for hyperdb",
   "main": "index.js",
   "scripts": {
