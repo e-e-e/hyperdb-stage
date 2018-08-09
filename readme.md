@@ -6,7 +6,7 @@ A staging area for [hyperdb](https://github.com/mafintosh/hyperdb).
 
 This enables you to interact with the stage as if it is the actual hyperdb instance. Put, delete, get, create a stream of data, or whatever, exactly as you would normally. However any changes you make to the stage will not effect the actual db until you commit them.
 
-**At the moment a stage is not multi writer enabled.**
+**hyperdb-stage is not multi writer enabled.**
 
 ## Installation
 

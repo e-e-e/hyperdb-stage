@@ -8,7 +8,11 @@ const r2w = require('./lib/read-to-write-transform-stream')
 function Stage (db) {
   if (!(this instanceof Stage)) return new Stage(db)
   this.db = db
-  this.stage = hyperdb(() => ram())
+  const opts = {}
+  if (this.db._reduce) opts.reduce = this.db._reduce
+  if (this.db._map) opts.map = this.db._map
+  if (this.db._valueEncoding) opts.valueEncoding = this.db._valueEncoding
+  this.stage = hyperdb(() => ram(), opts)
 }
 
 Stage.prototype.get = function (key, cb) {
