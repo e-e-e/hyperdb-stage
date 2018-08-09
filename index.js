@@ -1,7 +1,8 @@
 const hyperdb = require('hyperdb')
 const ram = require('random-access-memory')
-var toStream = require('nanoiterator/to-stream')
+const toStream = require('nanoiterator/to-stream')
 const join = require('./lib/join-iterator')
+const concat = require('./lib/concat-iterator')
 const r2w = require('./lib/read-to-write-transform-stream')
 
 function Stage (db) {
@@ -27,6 +28,26 @@ Stage.prototype.iterator = function (...args) {
 
 Stage.prototype.createReadStream = function (...args) {
   return toStream(this.iterator(...args))
+}
+
+Stage.prototype.history = function (opts) {
+  const stage = this.stage.history(opts)
+  const db = this.db.history(opts)
+  return (opts && opts.reverse) ? concat(stage, db) : concat(db, stage)
+}
+
+Stage.prototype.createHistoryStream = function (...args) {
+  return toStream(this.history(...args))
+}
+
+Stage.prototype.keyHistory = function (...args) {
+  const stage = this.stage.keyHistory(...args)
+  const db = this.db.keyHistory(...args)
+  return concat(stage, db)
+}
+
+Stage.prototype.createKeyHistoryStream = function (...args) {
+  return toStream(this.keyHistory(...args))
 }
 
 Stage.prototype.put = function (...args) {
