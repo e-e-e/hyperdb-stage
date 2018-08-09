@@ -34,6 +34,10 @@ Stage.prototype.createReadStream = function (...args) {
   return toStream(this.iterator(...args))
 }
 
+Stage.prototype.list = function (...args) {
+  return hyperdb.prototype.list.apply(this, args)
+}
+
 Stage.prototype.history = function (opts) {
   const stage = this.stage.history(opts)
   const db = this.db.history(opts)

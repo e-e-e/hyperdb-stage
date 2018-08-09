@@ -39,7 +39,9 @@ db.put('a', 'value', () => {
 
 ## API
 
-Stage has the same api as [hyperdb](https://github.com/mafintosh/hyperdb#api).
+Stage has mostly the same api as [hyperdb](https://github.com/mafintosh/hyperdb#api).
+
+### Stage specific functions
 
 In addition to hyperdb there are these special stage methods.
 
@@ -58,4 +60,22 @@ Callback is fired once all changes have been committed.
 #### `stage.revert()`
 
 Destroy all staged changes.
+
+### Unsupported Hyperdb methods
+
+The Staging area is not intended to be replicated or shared. It is a temporary in memory database for staging changes before committing them to your db instance.
+
+As such the following methods are unsupported. 
+
+- db.key
+- db.discoveryKey
+- db.local
+- db.on()
+- db.version()
+- db.checkout(version)
+- db.authorize(key, [callback])
+- db.authorized(key, [callback])
+- db.replicate([options])
+
+**Note:** You can still access these methods via `staging.db` or on the original hyperdb instance.
 

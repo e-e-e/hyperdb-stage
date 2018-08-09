@@ -17,6 +17,14 @@ function testStream (stream, values, cb) {
   })
 }
 
+function toValues (nodes) {
+  return nodes.map((n) => {
+    if (!n) return n
+    if (Array.isArray(n)) return n[0].value.toString()
+    return n.value.toString()
+  })
+}
+
 describe('Staged', () => {
   describe('#get', () => {
     it('returns value from staging if one exists', (done) => {
@@ -139,6 +147,106 @@ describe('Staged', () => {
         cb => put(db, ['a', 'b', 'c'], cb),
         cb => stage.del('c', cb),
         cb => testStream(stage.createReadStream(), ['a', 'b'], cb),
+        done
+      )
+    })
+  })
+  describe('#list', () => {
+    it('returns a list from db if staging has no values', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(db, ['a', 'b', 'c'], cb),
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['c', 'b', 'a'])
+          cb()
+        }),
+        done
+      )
+    })
+    it('returns a stream from staging if db has no values', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(stage, ['a', 'b', 'c'], cb),
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['c', 'b', 'a'])
+          cb()
+        }),
+        done
+      )
+    })
+    it('returns values from staging rather than db', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(db, ['a', 'b', 'c'], cb),
+        cb => put(stage, [{ key: 'a', value: 'a2' }, { key: 'b', value: 'b2' }, { key: 'c', value: 'c2' }], cb),
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['c2', 'b2', 'a2'])
+          cb()
+        }),
+        done
+      )
+    })
+    it('returns values from both', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(db, ['a', 'c'], cb),
+        cb => put(stage, ['b'], cb),
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['c', 'b', 'a'])
+          cb()
+        }),
+        done
+      )
+    })
+    it('returns values from both (again)', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(db, ['a', 'c', 'b'], cb),
+        cb => put(stage, ['b', 'd'], cb),
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['c', 'b', 'a', 'd'])
+          cb()
+        }),
+        done
+      )
+    })
+    it('returns does not return a value if deleted in staging', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(db, ['a', 'b', 'c'], cb),
+        cb => {
+          stage.del('a', cb)
+        },
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['c', 'b'])
+          cb()
+        }),
+        done
+      )
+    })
+    it('returns does not return a value if deleted in staging (again)', (done) => {
+      const db = createOne()
+      const stage = new Stage(db)
+      run(
+        cb => put(db, ['a', 'b', 'c'], cb),
+        cb => stage.del('c', cb),
+        cb => stage.list((err, nodes) => {
+          expect(err).to.eql(null)
+          expect(toValues(nodes)).to.eql(['b', 'a'])
+          cb()
+        }),
         done
       )
     })
